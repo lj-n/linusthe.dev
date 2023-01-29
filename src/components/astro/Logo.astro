@@ -1,0 +1,19 @@
+---
+const { url } = Astro;
+---
+
+<nav class="flex gap-2">
+  <a href="/" title="Homepage">
+    <img
+      src="/Moebius_Robot.png"
+      alt="Moebius Robot"
+      class="h-28 w-28 border-2 border-stone-600 dark:border-zinc-50 object-cover"
+    />
+  </a>
+
+  <div class="ml-auto mt-auto flex gap-1 flex-col text-sm items-end">
+    <a href="mailto:mymail@sooncoming.com" class="hover:underline hover:decoration-wavy">Contact</a>
+    <a href="https://github.com/lj-n" class="hover:underline hover:decoration-wavy">GitHub</a>
+    <a href="/b" class="hover:underline hover:decoration-wavy">Blog</a>
+  </div>
+</nav>

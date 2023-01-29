@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  main,
+  article {
+    @apply relative before:absolute before:w-full before:top-0 after:left-0 before:h-0.5 before:bg-stone-600 before:dark:bg-transparent;
+    @apply after:absolute after:w-full after:top-0.5 after:left-0 after:h-1 after:bg-gradient-to-r after:from-indigo-200 after:to-fuchsia-200 after:-z-10;
+  }
+}
+
+@layer utilities {
+  .abs-center {
+    @apply top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+  }
+}
+
+/* Base */
+* {
+  @apply box-border p-0 m-0;
+}
+html {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,
+    Noto Color Emoji;
+  color-scheme: light dark;
+  @apply font-normal scroll-smooth text-stone-900 dark:text-zinc-300 dark:bg-zinc-900 transition-colors;
+}
+
+/* Blog */
+article h1 {
+  @apply text-3xl my-4 font-bold dark:text-zinc-300;
+}
+article h2 {
+  @apply text-2xl mt-12 mb-4 font-bold dark:text-zinc-300;
+}
+article p {
+  @apply my-4 text-justify text-lg dark:text-zinc-400;
+}
+article pre {
+  tab-size: 2;
+  @apply p-4 -mx-4 text-sm rounded shadow;
+}
+article :not(pre) > code {
+  @apply px-1 rounded bg-stone-200 dark:bg-zinc-800 text-base;
+}
+article a {
+  @apply underline hover:decoration-wavy;
+}

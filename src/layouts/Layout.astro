@@ -1,0 +1,38 @@
+---
+import "../base.css";
+
+export interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props.frontmatter || Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body
+    class="max-w-prose mx-auto flex flex-col min-h-screen p-4 overflow-y-scroll overflow-x-hidden overscroll-none"
+  >
+    <script>
+      console.log(
+        "%c👋 Hi there, you can find the source code of my website at https://github.com/lj-n/www 🍭",
+        "font-weight: bold; font-size: 24px; padding: 10px 6px"
+      );
+    </script>
+
+    <slot />
+  </body>
+</html>
