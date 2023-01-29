@@ -16,7 +16,17 @@ const blogCollection = defineCollection({
   }),
 });
 
+/** Things Collection */
+const thingsCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.string().optional(),
+  }),
+});
+
 /** Export all collections */
 export const collections = {
   blog: blogCollection,
+  things: thingsCollection,
 };
