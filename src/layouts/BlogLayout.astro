@@ -6,13 +6,14 @@ type Props = MDXLayoutProps<{
   title: string;
   description: string;
   date?: string;
+  backURL: string
 }>;
 
 const { frontmatter, headings } = Astro.props;
 ---
 
 <Layout title={frontmatter.title} description={frontmatter.description}>
-  <a href="/b" title="go back" class="flex gap-2 text-sm hover:underline hover:decoration-wavy mb-2 mr-auto">
+  <a href={frontmatter.backURL} title="go back" class="flex gap-2 text-sm hover:underline hover:decoration-wavy mb-2 mr-auto">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="1em"
