@@ -42,7 +42,7 @@
     }
 
     function drawParticle(p: Particle) {
-      context.fillStyle = "#f0abfc";
+      context.fillStyle = "#818cf8";
       context.beginPath();
       context.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       context.fill();

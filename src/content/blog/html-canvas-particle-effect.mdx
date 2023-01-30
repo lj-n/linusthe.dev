@@ -11,12 +11,9 @@ import Demo from "../../components/blog/particle-effect/demo.svelte";
 
 # Particle Effect with JavaScript and HTML Canvas
 
-Whether you want fancy effects on your website, or are developing a JavaScript
-game, particle effects can spice things up. In this tutorial you will learn how
-to create simple particle effects with plain JavaScript and the
-[Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API). This
-tutorial requires some basic JavaScript knowledge, but is very beginner
-friendly.
+Whether you want fancy effects on your website, or are developing a JavaScript game, particle effects can spice things up.
+In this tutorial you will learn how to create simple particle effects with plain JavaScript and the [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API).
+This tutorial requires some basic JavaScript knowledge, but is very beginner friendly.
 
 The full code for this tutorial is at the [end](#the-code) of this article.
 
@@ -42,10 +39,9 @@ const context = canvas.getContext("2d");
 
 ## The Particle
 
-Now we create a particle `class`, which will be the template for our particle
-objects. The constructor method will be passed a x- and y-coordinate. The
-Particles in this tutorial will be circles so we also add a field r for the
-radius in the constructor method.
+Now we create a particle `class`, which will be the template for our particle objects.
+The constructor method will be passed a `x`- and `y`-coordinate.
+The Particles in this tutorial will be circles so we also add a field `r` for the radius in the constructor method.
 
 ```js
 class Particle {
@@ -59,10 +55,8 @@ class Particle {
 const p = new Particle(2, 4); // { x: 2, y: 4, r: 14 }
 ```
 
-Next we create a class method draw that draws the particle on the canvas. You
-can check out
-[this useful tutorial](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes)
-on how to draw different shapes.
+Next we create a class method draw that draws the particle on the canvas.
+You can check out [this useful tutorial](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes) on how to draw different shapes.
 
 ```js
 class Particle {
@@ -76,9 +70,8 @@ class Particle {
 }
 ```
 
-Now that we are able to draw on the canvas, we can add an 'click' event listener
-to the canvas element. We pass our mouse position coordinates from the event as
-arguments when we create a new instance of our `Particle` class.
+Now that we are able to draw on the canvas, we can add an 'click' event listener to the canvas element.
+We pass our mouse position coordinates from the event as arguments when we create a new instance of our `Particle` class.
 
 ```js
 function addParticle(ev) {
@@ -88,8 +81,7 @@ function addParticle(ev) {
 canvas.addEventListener("click", addParticle);
 ```
 
-Small note: If your canvas is not the size of your viewport, you have to get the
-_relative_ position of your mouse. You can do something like this:
+> 🛸 Small note: If your canvas is not the size of your viewport, you have to get the _relative_ position of your mouse. You can do something like this:
 
 ```js
 function handleClick(ev) {
@@ -110,12 +102,10 @@ Well done! We made our first particles.
 Static circles aren't very interesting. We should add some animation to them.
 For this we need an animation _loop_.
 
-We could use `setInterval` or `setTimeout` but we want a 🧈-smooth animation that
-matches the framerate of our device. This is where
-[requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame)
-comes in. `requestAnimationFrame` accepts a callback function and requests that
-this function is called before the browser performs the next repaint. To call it
-again in the next _"frame"_ we will create our `loop` like this:
+We could use `setInterval` or `setTimeout` but we want a 🧈-smooth animation that matches the framerate of our device.
+This is where [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) comes in.
+`requestAnimationFrame` accepts a callback function and requests that this function is called before the browser performs the next repaint.
+To call it again in the next _"frame"_ we will create our `loop` like this:
 
 ```js
 function loop() {
@@ -129,15 +119,10 @@ function loop() {
 window.requestAnimationFrame(loop);
 ```
 
-_But wait, doesn't my animation speed now depend on the refresh rate of my
-monitor?_
+> 🛸 But wait, doesn't my animation speed now depend on the refresh rate of my monitor?
 
-This is correct, but `requestAnimationFrame` gives you also the tool to time
-your animation: a pretty
-[precise timestamp](https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp).
-The `timestamp` is passed as the first argument to the callback function. We
-will use this timestamp to calculate the `elapsedTime` since the last frame and
-update our particles accordingly.
+This is correct, but `requestAnimationFrame` gives you also the tool to time your animation: a pretty [precise timestamp](https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp).
+The `timestamp` is passed as the first argument to the callback function. We will use this timestamp to calculate the `elapsedTime` since the last frame and update our particles accordingly.
 
 ```js
 let lastFrame = 0;
@@ -152,16 +137,13 @@ function loop(timestamp) {
 }
 ```
 
-Because the `timestamp` is in milliseconds we divide by 1000 to calculate the
-seconds that have passed since the last frame.
+Because the `timestamp` is in milliseconds we divide by 1000 to calculate the seconds that have passed since the last frame.
 
-On more thing you should know about `requestAnimationFrame` is, that it will
-pause once you minimize the browser window or go into another tab. This will
-cause the `elapsedTime` to be so vast, that it will mess up your animations. The
-`Math.min` ensures that the `elapsedTime` will not surpass `0.1`.
+On more thing you should know about `requestAnimationFrame` is, that it will pause once you minimize the browser window or go into another tab.
+This will cause the `elapsedTime` to be so vast, that it will mess up your animations.
+The `Math.min` ensures that the `elapsedTime` will not surpass `0.1`.
 
-Now we will store our particle in an array, so we can iterate over them in our
-loop function.
+Now we will store our particle in an array, so we can iterate over them in our loop function.
 
 ```js
 let particles = [];
@@ -182,10 +164,11 @@ function addParticle(ev) {
 }
 ```
 
-_They are still static and and nothing moves 👀._
+> 👀 They are still static and and nothing moves?!
 
-That is because we don't update our particles yet. Let's add a `update` method
-to the Particle class. It will reduce the particles radius `r` every frame:
+That is because we don't update our particles yet.
+Let's add a `update` method to the Particle class.
+It will reduce the particles radius `r` every frame:
 
 ```js
 class Particle {
@@ -196,12 +179,10 @@ class Particle {
 }
 ```
 
-Looks good, but there's actually a problem with this: A particles radius will
-eventually be negative and this will cause an error in our draw method. To solve
-this, we should remove particles whose radius has become smaller than or is
-equal to 0.1. To remove the _drawings_ of the previous frame we also have to
-clear the canvas every frame before we draw our updated particles. Our finished
-`loop` looks like this:
+Looks good, but there's actually a problem with this: A particles radius will eventually be negative and this will cause an error in our draw method.
+To solve this, we should remove particles whose radius has become smaller than or is equal to 0.1.
+To remove the _drawings_ of the previous frame we also have to clear the canvas every frame before we draw our updated particles.
+Our finished `loop` function looks like this:
 
 ```js
 function loop(timestamp) {
@@ -237,13 +218,12 @@ Great! We have our first animated particles 🎉.
 
 Now to the last part: We want to create a _small explosion_ of particles 💥.
 
-To move them in different direction the particles need a velocity. For this we
-add the fields vx and vy to our Particle class. We will set some random values
-so it doesn't look to stiff. We also change the radius to a random value to
-create different sized particles.
+To move them in different direction the particles need a velocity.
+For this we add the fields `vx` and `vy` to our Particle class.
+We will set some random values so it doesn't look to stiff.
+We also change the radius to a random value to create different sized particles.
 
-At last we have to add the our velocities to our particles position in the
-update method.
+At last we have to add the our velocities to our particles position in the update method.
 
 Our finished class looks like this:
 
