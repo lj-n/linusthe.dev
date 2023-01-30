@@ -1,0 +1,75 @@
+---
+layout: ../../layouts/BlogLayout.astro
+title: "CSS: Animate Relative to Mouse Position"
+description: "This tutoral provides a comprehensive example to animating with CSS-Variables and JavaScript, relative to the mouse position."
+date: "December 2022"
+tags: ["CSS", "JavaScript", "Animations"]
+backURL: "/b"
+draft: true
+---
+
+import Demo from "../../components/blog/relative-to-mouse/demo.svelte";
+
+# {frontmatter.title}
+
+With CSS and JavaScript, it's possible to create animations that are relative to the mouse position.
+In this article i will show how to use these technologies to create engaging and interactive animations that respond to the movement of the user's mouse.
+Whether you're a seasoned developer or just starting out, you'll discover how to bring your website to life with this exciting example.
+
+## CSS-Variables
+
+CSS Variables, also known as CSS Custom Properties, allow you to store values that can be reused throughout your CSS code.
+
+```css
+:root {
+  --my-button-color: salmon;
+}
+
+button {
+  background: var(--my-button-color);
+}
+
+button:hover {
+  --my-button-color: hotpink;
+}
+```
+
+By using JavaScript, you can update the values of these variables in real-time, creating dynamic and interactive animations.
+
+## The goal
+
+After this tutorial you will be able to animate something like this:
+
+<Demo client:load/>
+
+> 🛸 These examples will only work if you are using a mouse.
+
+## Setup
+
+First lets make sure we have a html element to animate.
+
+```html
+<div id="myElement">
+  <span>Hello CSS Variables</span>
+</div>
+```
+
+Then create a reference in JavaScript.
+
+```js
+const element = document.getElementById("myElement");
+```
+
+And some basic CSS so we can see something.
+
+```css
+#myElement {
+  padding: 4rem;
+  border: 1px solid purple;
+  display: flex;
+}
+
+#myElement span {
+  margin: auto; /* My favorite way to center things */
+}
+```

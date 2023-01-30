@@ -4,6 +4,7 @@ import { defineCollection, z } from "astro:content";
 const TagSchema = z.union([
   z.literal("JavaScript"),
   z.literal("Animations"),
+  z.literal("CSS"),
 ]);
 export type Tag = z.infer<typeof TagSchema>;
 
@@ -11,6 +12,7 @@ const blogCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
+    draft: z.boolean().optional(),
     date: z.string().optional(),
     tags: z.array(TagSchema),
   }),

@@ -7,7 +7,10 @@ const { searchParams } = Astro.url;
 
 const tag = searchParams.get("tag") as Tag | null;
 
-const posts = await getCollection("blog", (entry) => (tag ? entry.data.tags.includes(tag) : true));
+const posts = await getCollection("blog", ({ data }) => {
+  if (data.draft) return false;
+  return tag ? data.tags.includes(tag) : true;
+});
 ---
 
 <HomeLayout title="Blog" description="Things i learned, use and like to share.">
