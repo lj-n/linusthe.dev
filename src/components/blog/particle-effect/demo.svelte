@@ -34,9 +34,9 @@
 
       /** Stage 3 */
       for (let i = 0; i < 60; i++) {
-        const vy = Math.random() * 300 - 150;
-        const vx = Math.random() * 300 - 150;
-        const r = Math.random() * 14 + 1;
+        const vy = Math.random() * 400 - 200;
+        const vx = Math.random() * 400 - 200;
+        const r = Math.random() * 20 + 1;
         particles = [...particles, { x, y, vx, vy, r }];
       }
     }
@@ -54,7 +54,7 @@
 
       /** Update Particles */
       for (const p of particles) {
-        p.r -= elapsedTime + 0.2;
+        p.r -= elapsedTime * 14;
         if (p.vx && p.vy) {
           p.x += p.vx * elapsedTime;
           p.y += p.vy * elapsedTime;

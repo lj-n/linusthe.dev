@@ -25,6 +25,8 @@ values will equal the pixels on the axes. You can style the canvas size with CSS
 but this will just scale the rendered image and can distort your graphics. Then
 we get the drawing context with `getContext()`.
 
+> The Context is part of [the Canvas Api](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D) and is used for drawing shapes, text, images, and other objects.
+
 ```js
 // html
 <canvas id="myCanvas"></canvas>;
@@ -39,30 +41,35 @@ const context = canvas.getContext("2d");
 
 ## The Particle
 
-Now we create a particle `class`, which will be the template for our particle objects.
+Now we create a `class Pparticle`, which will be the template for our particle objects.
 The constructor method will be passed a `x`- and `y`-coordinate.
 The Particles in this tutorial will be circles so we also add a field `r` for the radius in the constructor method.
+For now the radius will always be `10`.
 
 ```js
 class Particle {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.r = 14;
+    this.r = 10;
   }
 }
 
-const p = new Particle(2, 4); // { x: 2, y: 4, r: 14 }
+const p = new Particle(2, 4); // { x: 2, y: 4, r: 10 }
 ```
 
-Next we create a class method draw that draws the particle on the canvas.
-You can check out [this useful tutorial](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes) on how to draw different shapes.
+Next we create a class method `draw` that _draws_ the particle on the canvas.
 
 ```js
 class Particle {
-  // ...
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.r = 10;
+  }
+
   draw() {
-    context.fillStyle = "salmon";
+    context.fillStyle = "#818cf8";
     context.beginPath();
     context.arc(this.x, this.y, this.r, 0, Math.PI * 2);
     context.fill();
@@ -70,18 +77,32 @@ class Particle {
 }
 ```
 
-Now that we are able to draw on the canvas, we can add an 'click' event listener to the canvas element.
-We pass our mouse position coordinates from the event as arguments when we create a new instance of our `Particle` class.
+- `fillStyle` specifies the color, gradient, or pattern to use for drawing.
+- `beginPath` starts a new path to draw.
+- `arc` adds an _arc_ to the current path.
+  It takes a x- and y-coordinate, a radius, a start angle and an end angle as parameters: `arc(x, y, radius, startAngle, endAngle)`.
+  Since we want a whole circle we start at an angle of `0` and end at `2π`.
+- `fill` fills the current path with the current `fillStyle`.
+
+> If you want to know how to draw other shapes, [check out this useful tutorial](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes).
+
+Now that we are able to draw on the canvas, we can add an `click` event listener to the canvas element.
 
 ```js
 function addParticle(ev) {
+  // get the x- and y-coordinate from the Mouse Event
   const pa = new Particle(ev.x, ev.y);
   pa.draw();
 }
+
 canvas.addEventListener("click", addParticle);
 ```
 
-> Small note: If your canvas is not the size of your viewport, you have to get the _relative_ position of your mouse. You can do something like this:
+We pass our mouse coordinates from the event as arguments when we create a new instance of our `Particle` class.
+Then we call the `draw` method on the instance, to draw on our canvas.
+
+> Small note: If your canvas is not the size of your viewport, you have to get the _relative_ position of your mouse.
+> You can use the Element method [getBoundingClientRect](https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect).
 
 ```js
 function handleClick(ev) {
@@ -93,47 +114,108 @@ function handleClick(ev) {
 }
 ```
 
-Well done! We made our first particles.
+Now we are able to draw our first particles, **well done!**
 
 <Demo stage="1" client:load />
 
 ## The Loop
 
-Static circles aren't very interesting. We should add some animation to them.
+Static circles aren't very interesting. We will add some animation to them.
 For this we need an animation _loop_.
 
-We could use `setInterval` or `setTimeout` but we want a 🧈-smooth animation that matches the framerate of our device.
+We could use `setInterval` to update the particles every given number of milliseconds.
+The problem is that this does not take into account the performance of the device.
 This is where [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) comes in.
-`requestAnimationFrame` accepts a callback function and requests that this function is called before the browser performs the next repaint.
-To call it again in the next _"frame"_ we will create our `loop` like this:
+`requestAnimationFrame` is a method that schedules a function to be called on the next available animation frame.
+It ensures that our animation is synchronized with the refresh rate of our device, resulting in a 🧈-smooth animation:
 
 ```js
 function loop() {
-  // we will draw our particles here
+  // we will update and draw our particles here
 
   // continue the loop
   window.requestAnimationFrame(loop);
 }
 
-// start the loop
+// start the loop once
 window.requestAnimationFrame(loop);
 ```
 
-> But wait, doesn't my animation speed now depend on the refresh rate of my monitor?
-
-This is correct, but `requestAnimationFrame` gives you also the tool to time your animation: a pretty [precise timestamp](https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp).
-The `timestamp` is passed as the first argument to the callback function. We will use this timestamp to calculate the `elapsedTime` since the last frame and update our particles accordingly.
+To draw and update multiple particles each loop, we create an `particles` array and update our `addParticle` function:
 
 ```js
+let particles = [];
+
+function addParticle(ev) {
+  // get the x- and y-coordinate from the Mouse Event
+  const pa = new Particle(ev.x, ev.y);
+  particles.push(pa);
+}
+```
+
+Now we are able to iterate over the particles in our loop
+
+```js
+function loop() {
+  for (const pa of particles) {
+    pa.draw();
+  }
+
+  window.requestAnimationFrame(loop);
+}
+```
+
+> They are still static and and nothing moves?!
+
+Yes, this is because we aren't changing our particles yet.
+Let's animate our particles size:
+For this we update each particles radius `r` every loop.
+Before we draw them, we make sure to _remove_ any particles with a radius smaller than `0.1`.
+
+```js
+function loop() {
+  for (const pa of particles) {
+    pa.r -= 0.2; // decrease particles radius
+  }
+
+  // just keep particles where r > 0.1
+  particles = particles.filter((pa) => pa.r > 0.1);
+
+  for (const pa of particles) {
+    pa.draw();
+  }
+
+  window.requestAnimationFrame(loop);
+}
+```
+
+> But wait, at my friends display the particles are animating a lot faster!
+
+This is because your friends monitor has a different refresh rate and the `loop` function is called more often.
+
+As we rember this is actually an advantage of `requestAnimationFrame`.
+We just have to decrease our particles radius **_relative to the time that passed_** instead of a fixed amount every frame.
+
+To do this `requestAnimationFrame` gives you the tool to calculate the passed time:
+a pretty [precise timestamp](https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp).
+The `timestamp` is passed as the first argument to the callback function.
+We will use this timestamp to calculate the `elapsedTime` since the last frame and update our particles accordingly.
+
+```js
+// save the timestamp of the last frame
 let lastFrame = 0;
 
 function loop(timestamp) {
-  let elapsedTime = Math.min((timestamp - lastFrame) / 1000, 0.1);
+  // get the elapsed time in seconds
+  let elapsedTime = (timestamp - lastFrame) / 1000;
   lastFrame = timestamp;
 
-  // we will draw our particles here
+  for (const pa of particles) {
+    // decrease particles radius by 10/s
+    pa.r -= elapsedTime * 10;
+  }
 
-  window.requestAnimationFrame(loop);
+  // ...
 }
 ```
 
@@ -141,76 +223,64 @@ Because the `timestamp` is in milliseconds we divide by 1000 to calculate the se
 
 On more thing you should know about `requestAnimationFrame` is, that it will pause once you minimize the browser window or go into another tab.
 This will cause the `elapsedTime` to be so vast, that it will mess up your animations.
-The `Math.min` ensures that the `elapsedTime` will not surpass `0.1`.
 
-Now we will store our particle in an array, so we can iterate over them in our loop function.
+Let's use `Math.min` to ensures that the `elapsedTime` will not surpass `0.1`.
 
 ```js
-let particles = [];
-
 function loop(timestamp) {
+  // get the elapsed time in seconds
   let elapsedTime = Math.min((timestamp - lastFrame) / 1000, 0.1);
   lastFrame = timestamp;
 
-  for (const pa of particles) {
-    pa.draw();
-  }
-
-  window.requestAnimationFrame(loop);
-}
-
-function addParticle(ev) {
-  particles.push(new Particle(ev.x, ev.y));
+  // ...
 }
 ```
 
-> They are still static and and nothing moves?!
-
-That is because we don't update our particles yet.
-Let's add a `update` method to the Particle class.
-It will reduce the particles radius `r` every frame:
+For consistency we wil add an `update` method to the `Particle` class:
 
 ```js
 class Particle {
-  // ...
+  constructor(x, y) {
+    // ...
+  }
+
+  draw() {
+    // ..
+  }
+
   update(elapsedTime) {
-    this.r -= elapsedTime + 0.2;
+    this.r -= elapsedTime * 10;
   }
 }
 ```
 
-Looks good, but there's actually a problem with this: A particles radius will eventually be negative and this will cause an error in our draw method.
-To solve this, we should remove particles whose radius has become smaller than or is equal to 0.1.
-To remove the _drawings_ of the previous frame we also have to clear the canvas every frame before we draw our updated particles.
-Our finished `loop` function looks like this:
+Now we call the method in our loop, which at this point should look like this.
 
 ```js
 function loop(timestamp) {
   let elapsedTime = Math.min((timestamp - lastFrame) / 1000, 0.1);
   lastFrame = timestamp;
 
-  // update all particles
   for (const pa of particles) {
     pa.update(elapsedTime);
   }
 
-  // remove particles with radius <= 0.1
-  particles = particles.filter((pt) => pt.r > 0.1);
+  particles = particles.filter((pa) => pa.r > 0.1);
 
-  // clear canvas
   context.clearRect(0, 0, canvas.width, canvas.height);
 
-  // draw all particles
   for (const pa of particles) {
     pa.draw();
   }
 
-  // continue loop
   window.requestAnimationFrame(loop);
 }
 ```
 
-Great! We have our first animated particles 🎉.
+We also have to call `clearRect(x, y, width, height)` in the loop to clear the drawings of the previous frame.
+The rectabgle's top-left corner is at `x`, `y`. Its size is specified by `width` and `height`.
+
+**Great!** We have our first animated particles 🎉.
 
 <Demo stage="2" client:load />
 
@@ -221,9 +291,17 @@ Now to the last part: We want to create a _small explosion_ of particles 💥.
 To move them in different direction the particles need a velocity.
 For this we add the fields `vx` and `vy` to our Particle class.
 We will set some random values so it doesn't look to stiff.
-We also change the radius to a random value to create different sized particles.
+Let's also change the radius to a random value to create different sized particles.
 
-At last we have to add the our velocities to our particles position in the update method.
+```js
+// Random Value between 200 and -200
+this.vy = Math.random() * 400 - 200;
+this.vx = Math.random() * 400 - 200;
+// Random Value between 20 and 1
+this.r = Math.random() * 20 + 1;
+```
+
+At last we have to add the velocities to our particles position in its `update` method.
 
 Our finished class looks like this:
 
@@ -232,12 +310,12 @@ class Particle {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.vy = Math.random() * 300 - 150;
-    this.vx = Math.random() * 300 - 150;
-    this.r = Math.random() * 14 + 1;
+    this.vy = Math.random() * 400 - 200;
+    this.vx = Math.random() * 400 - 200;
+    this.r = Math.random() * 20 + 1;
   }
   draw() {
-    context.fillStyle = "salmon";
+    context.fillStyle = "#818cf8";
     context.beginPath();
     context.arc(this.x, this.y, this.r, 0, Math.PI * 2);
     context.fill();
@@ -251,11 +329,13 @@ class Particle {
 ```
 
 Now all we have to do is create a lot of particles when we click the canvas.
+Lets change the `addParticle` function accordingly:
 
 ```js
-function addParticle({ x, y }) {
+function addParticle(ev) {
   for (let i = 0; i < 60; i++) {
-    particles.push(new Particle(x, y));
+    const pa = new Particle(ev.x, ev.y);
+    particles.push(pa);
   }
 }
 ```
@@ -283,12 +363,12 @@ class Particle {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.vy = Math.random() * 300 - 150;
-    this.vx = Math.random() * 300 - 150;
-    this.r = Math.random() * 14 + 1;
+    this.vy = Math.random() * 400 - 200;
+    this.vx = Math.random() * 400 - 200;
+    this.r = Math.random() * 20 + 1;
   }
   draw() {
-    context.fillStyle = "salmon";
+    context.fillStyle = "#818cf8";
     context.beginPath();
     context.arc(this.x, this.y, this.r, 0, Math.PI * 2);
     context.fill();
@@ -309,8 +389,8 @@ function loop(timestamp) {
     pa.update(elapsedTime);
   }
 
-  // remove particles with radius <= 0.1
-  particles = particles.filter((pt) => pt.r > 0.1);
+  // keep only particles with radius > 0.1
+  particles = particles.filter((pa) => pa.r > 0.1);
 
   // clear canvas
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -324,12 +404,14 @@ function loop(timestamp) {
   window.requestAnimationFrame(loop);
 }
 
-// create 40 particles at mouse position
-function addParticle({ x, y }) {
-  for (let i = 0; i < 40; i++) {
-    particles.push(new Particle(x, y));
+// create 60 particles at mouse position
+function addParticle(ev) {
+  for (let i = 0; i < 60; i++) {
+    const pa = new Particle(ev.x, ev.y);
+    particles.push(pa);
   }
 }
+
 canvas.addEventListener("click", addParticle);
 
 // start the loop

@@ -49,11 +49,11 @@ article a {
   @apply underline hover:decoration-wavy;
 }
 article blockquote {
-  @apply text-justify items-center bg-stone-50 -mx-4 px-4 py-2 text-base my-4 italic rounded shadow-sm overflow-hidden dark:text-zinc-400 dark:bg-zinc-800 flex;
+  @apply text-justify items-center bg-stone-50 -mx-4 px-4 py-3 text-base my-4 italic leading-tight rounded shadow-sm overflow-hidden dark:text-zinc-400 dark:bg-zinc-800 flex;
   @apply relative after:absolute after:h-full after:w-2 after:left-0 after:top-0 after:bg-indigo-200 dark:after:bg-indigo-400;
-  @apply before:content-["🛸"] before:pr-2;
+  @apply before:content-["🛸_<"] before:pr-2 before:whitespace-nowrap before:not-italic;
 }
 article ul,
 article ol {
-  @apply list-disc list-outside text-lg marker:text-indigo-300 dark:text-zinc-400 dark:marker:text-indigo-500;
+  @apply my-4 list-disc list-outside text-lg marker:text-indigo-300 dark:text-zinc-400 dark:marker:text-indigo-500;
 }

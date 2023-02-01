@@ -1,6 +1,6 @@
 ---
 layout: ../../layouts/BlogLayout.astro
-title: "Sum up your hours played on Steam"
+title: "Sum up your total hours played on Steam"
 description: "Small Deno script to calculate the amount of time you wasted playing Steam games."
 date: "January, 2023"
 backURL: "/things"
@@ -9,6 +9,8 @@ backURL: "/things"
 # {frontmatter.title}
 
 Small Deno script to calculate the amount of time you wasted playing Steam games. ⏱
+
+> There is also a website if you don't want to use the cli command. At [steam-total.deno.dev](https://steam-total.deno.dev/).
 
 ## Why?
 
@@ -31,7 +33,7 @@ A Steam web api key is pretty easy to get, so I wrote a little script that sums 
 Run:
 
 ```zsh
-deno run -A https://raw.githubusercontent.com/lj-n/wasted-time-playing-games/main/mod.ts --apiKey="Steam Api Key here" --steamId="Steam User ID here"
+deno run -A https://raw.githubusercontent.com/lj-n/wasted-time-playing-games/main/cli.ts --apiKey="Steam Api Key here" --steamId="Steam User ID here"
 ```
 
 It should result in something like this:
@@ -49,4 +51,6 @@ Your three most played games are:
 └──────────────────────────────────┴────────┘
 ```
 
-The script can be found [here](https://github.com/lj-n/wasted-time-playing-games).
+## Source
+
+The sourcecode can be found [here](https://github.com/lj-n/wasted-time-playing-games).
