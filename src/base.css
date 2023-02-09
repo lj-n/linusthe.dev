@@ -28,6 +28,11 @@ html {
   @apply font-normal scroll-smooth text-stone-900 dark:text-zinc-300 dark:bg-zinc-900 transition-colors;
 }
 
+/* Tags */
+.tag {
+  @apply text-xs px-2 py-0.5 rounded-sm bg-gradient-to-tr from-indigo-100 to-fuchsia-100 dark:text-zinc-100 dark:from-zinc-600 dark:to-zinc-800;
+}
+
 /* Blog */
 article h1 {
   @apply text-3xl sm:text-4xl my-4 font-bold dark:text-zinc-300;
