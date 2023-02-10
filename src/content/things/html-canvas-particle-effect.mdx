@@ -25,7 +25,7 @@ values will equal the pixels on the axes. You can style the canvas size with CSS
 but this will just scale the rendered image and can distort your graphics. Then
 we get the drawing context with `getContext()`.
 
-> The Context is part of [the Canvas Api](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D) and is used for drawing shapes, text, images, and other objects.
+> The Context is part of [the Canvas Api](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D) and is used for drawing shapes, text, images and other objects.
 
 ```js
 // html
@@ -41,7 +41,7 @@ const context = canvas.getContext("2d");
 
 ## The Particle
 
-Now we create a `class Pparticle`, which will be the template for our particle objects.
+Now we create a `class Particle`, which will be the template for our particle objects.
 The constructor method will be passed a `x`- and `y`-coordinate.
 The Particles in this tutorial will be circles so we also add a field `r` for the radius in the constructor method.
 For now the radius will always be `10`.
@@ -169,7 +169,7 @@ function loop() {
 
 Yes, this is because we aren't changing our particles yet.
 Let's animate our particles size:
-For this we update each particles radius `r` every loop.
+For this we update each particle's radius `r` every loop.
 Before we draw them, we make sure to _remove_ any particles with a radius smaller than `0.1`.
 
 ```js
@@ -189,7 +189,7 @@ function loop() {
 }
 ```
 
-> But wait, at my friends display the particles are animating a lot faster!
+> But wait, at my friend's display the particles are animating a lot faster!
 
 This is because your friends monitor has a different refresh rate and the `loop` function is called more often.
 
@@ -221,7 +221,7 @@ function loop(timestamp) {
 
 Because the `timestamp` is in milliseconds we divide by 1000 to calculate the seconds that have passed since the last frame.
 
-On more thing you should know about `requestAnimationFrame` is, that it will pause once you minimize the browser window or go into another tab.
+One more thing you should know about `requestAnimationFrame` is, that it will pause once you minimize the browser window or go into another tab.
 This will cause the `elapsedTime` to be so vast, that it will mess up your animations.
 
 Let's use `Math.min` to ensures that the `elapsedTime` will not surpass `0.1`.
@@ -236,7 +236,7 @@ function loop(timestamp) {
 }
 ```
 
-For consistency we wil add an `update` method to the `Particle` class:
+For consistency we will add an `update` method to the `Particle` class:
 
 ```js
 class Particle {
@@ -278,7 +278,7 @@ function loop(timestamp) {
 ```
 
 We also have to call `clearRect(x, y, width, height)` in the loop to clear the drawings of the previous frame.
-The rectabgle's top-left corner is at `x`, `y`. Its size is specified by `width` and `height`.
+The rectangle's top-left corner is at `x`, `y`. Its size is specified by `width` and `height`.
 
 **Great!** We have our first animated particles 🎉.
 
@@ -301,7 +301,7 @@ this.vx = Math.random() * 400 - 200;
 this.r = Math.random() * 20 + 1;
 ```
 
-At last we have to add the velocities to our particles position in its `update` method.
+At last we have to add the velocities to our particle's position in its `update` method.
 
 Our finished class looks like this:
 
