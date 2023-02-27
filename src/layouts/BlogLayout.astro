@@ -6,14 +6,18 @@ type Props = MDXLayoutProps<{
   title: string;
   description: string;
   date?: string;
-  backURL: string
+  backURL: string;
 }>;
 
 const { frontmatter, headings } = Astro.props;
 ---
 
 <Layout title={frontmatter.title} description={frontmatter.description}>
-  <a href={frontmatter.backURL} title="go back" class="flex gap-2 text-sm hover:underline hover:decoration-wavy mb-2 mr-auto">
+  <a
+    href={frontmatter.backURL}
+    title="go back"
+    class="flex gap-2 text-sm hover:underline hover:decoration-wavy mb-2 mr-auto"
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="1em"
@@ -32,12 +36,10 @@ const { frontmatter, headings } = Astro.props;
   </a>
   <article class="py-10">
     <slot />
-  </article>
-  <footer class="flex justify-center mt-auto border-t border-stone-600 dark:border-zinc-500 pt-4">
-    <p class="text-sm">
-      {
-        headings.length && (
-          <a href={`#${headings[0].slug}`} class="flex gap-2 hover:underline hover:decoration-wavy">
+    {
+      headings.length && (
+        <p class="text-sm flex mt-4">
+          <a href={`#${headings[0].slug}`} class="mx-auto flex gap-2 hover:underline hover:decoration-wavy">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="1em"
@@ -49,13 +51,13 @@ const { frontmatter, headings } = Astro.props;
               stroke-linejoin="round"
               class="feather feather-arrow-up"
             >
-                <line x1="12" y1="19" x2="12" y2="5" />
-                <polyline points="5 12 12 5 19 12" />
+              <line x1="12" y1="19" x2="12" y2="5" />
+              <polyline points="5 12 12 5 19 12" />
             </svg>
             to the top
           </a>
-        )
-      }
-    </p>
-  </footer>
+        </p>
+      )
+    }
+  </article>
 </Layout>

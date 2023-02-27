@@ -24,7 +24,7 @@ const { title, description } = Astro.props.frontmatter || Astro.props;
     <title>{title}</title>
   </head>
   <body
-    class="max-w-prose mx-auto flex flex-col min-h-screen p-4 overflow-y-scroll overflow-x-hidden overscroll-none"
+    class="max-w-prose mx-auto flex flex-col min-h-screen p-4 overflow-y-scroll overflow-x-hidden overscroll-none text-stone-900 bg-stone-50 dark:text-zinc-300 dark:bg-zinc-900 transition-colors"
   >
     <script>
       console.log(
@@ -34,5 +34,11 @@ const { title, description } = Astro.props.frontmatter || Astro.props;
     </script>
 
     <slot />
+
+    <footer
+      class="flex justify-between mt-auto border-t border-stone-600 dark:border-zinc-500 pt-4 text-sm"
+    >
+      ©2023 linusthe.dev
+    </footer>
   </body>
 </html>
