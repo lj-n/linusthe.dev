@@ -1,12 +1,14 @@
 ---
-import "../base.css";
+import Header from "@astro/Header.astro";
+import "@/base.css";
 
 export interface Props {
   title: string;
   description: string;
+  post?: boolean;
 }
 
-const { title, description } = Astro.props.frontmatter || Astro.props;
+const { title, description, post = false } = Astro.props.frontmatter || Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -23,20 +25,23 @@ const { title, description } = Astro.props.frontmatter || Astro.props;
     <meta property="og:description" content={description} />
     <title>{title}</title>
   </head>
+
   <body
-    class="max-w-prose mx-auto flex flex-col min-h-screen p-4 overflow-y-scroll overflow-x-hidden overscroll-none text-stone-900 bg-stone-50 dark:text-zinc-300 dark:bg-zinc-900 transition-colors"
+    class="max-w-prose mx-auto flex flex-col min-h-screen px-4 overflow-y-scroll overflow-x-hidden overscroll-none text-stone-900 bg-stone-50 dark:text-zinc-300 dark:bg-zinc-900 transition-colors"
   >
-    <script>
+    <script is:inline>
       console.log(
-        "%c👋 Hi there, you can find the source code of my website at https://github.com/lj-n/www 🍭",
+        "%c👋 Hi there, you can find the source code of my website at https://github.com/lj-n/linusthe.dev 🍭",
         "font-weight: bold; font-size: 24px; padding: 10px 6px"
       );
     </script>
 
+    <Header post={post} />
+
     <slot />
 
     <footer
-      class="flex justify-between mt-auto border-t border-stone-600 dark:border-zinc-500 pt-4 text-sm"
+      class="flex justify-center mt-auto border-t border-stone-600 dark:border-zinc-500 py-2 text-sm"
     >
       ©2023 linusthe.dev
     </footer>
