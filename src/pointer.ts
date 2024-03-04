@@ -1,7 +1,17 @@
-import type { World, Vector2 } from "@dimforge/rapier2d";
+import type { World, Vector2, Collider } from "@dimforge/rapier2d";
 import { handSVG, lerpVector } from "./utils";
 
 const RAPIER = await import("@dimforge/rapier2d");
+
+/**
+ * Collider Groups
+ * | Type             | Group        | Interact with groups | Bitmask    |
+ * | :--------------- | :----------  | :------------------  | :--------- |
+ * | Walls            | 0            | 2                    | 0x00010004 |
+ * | Pointer          | 1            | 2                    | 0x00020004 |
+ * | Objects          | 2            | 0, 1, 2              | 0x00040007 |
+ */
+const COLLISION_GROUP_POINTER = 0x00020004;
 
 /**
  * Creates a pointer object that represents a movable pointer in a physics world.
@@ -16,7 +26,6 @@ export function createPointer(
   world: World,
   canvas: HTMLCanvasElement,
   scalingFactor: number,
-  radius = 0.55,
   lerpFactor = 0.5
 ) {
   const body = world.createRigidBody(
@@ -26,14 +35,63 @@ export function createPointer(
     )
   );
 
-  const collider = world.createCollider(
-    RAPIER.ColliderDesc.ball(radius).setEnabled(false),
-    body
+  const collider: Collider[] = [];
+
+  collider.push(
+    world.createCollider(
+      RAPIER.ColliderDesc.ball(0.55)
+        .setEnabled(false)
+        .setCollisionGroups(COLLISION_GROUP_POINTER),
+      body
+    ),
+    world.createCollider(
+      RAPIER.ColliderDesc.ball(2.5)
+        .setEnabled(false)
+        .setTranslation(4.5, 4.5)
+        .setCollisionGroups(COLLISION_GROUP_POINTER),
+      body
+    ),
+    world.createCollider(
+      RAPIER.ColliderDesc.ball(2.5)
+        .setEnabled(false)
+        .setTranslation(3.7, 4.5)
+        .setCollisionGroups(COLLISION_GROUP_POINTER),
+      body
+    ),
+    world.createCollider(
+      RAPIER.ColliderDesc.ball(0.7)
+        .setEnabled(false)
+        .setTranslation(2.53, 2)
+        .setCollisionGroups(COLLISION_GROUP_POINTER),
+      body
+    ),
+    world.createCollider(
+      RAPIER.ColliderDesc.ball(0.6)
+        .setEnabled(false)
+        .setTranslation(3.9, 2)
+        .setCollisionGroups(COLLISION_GROUP_POINTER),
+      body
+    ),
+    world.createCollider(
+      RAPIER.ColliderDesc.ball(1.4)
+        .setEnabled(false)
+        .setTranslation(4.8, 3)
+        .setCollisionGroups(COLLISION_GROUP_POINTER),
+      body
+    ),
+    world.createCollider(
+      RAPIER.ColliderDesc.cuboid(0.52, 2)
+        .setEnabled(false)
+        .setRotation(-0.61)
+        .setTranslation(1.15, 1.6)
+        .setCollisionGroups(COLLISION_GROUP_POINTER),
+      body
+    )
   );
 
   /** prevent immediate forces when the pointer moves to the initial position */
   setTimeout(() => {
-    collider.setEnabled(true);
+    collider.forEach((c) => c.setEnabled(true));
   }, 1000);
 
   return {
