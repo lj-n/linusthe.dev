@@ -76,6 +76,9 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
   font-family: "Eczar", serif;
   overscroll-behavior: none;
 }
@@ -86,12 +89,8 @@ body {
   pointer-events: none;
 }
 
-.links {
-  margin: 0 auto;
+a span {
   user-select: none;
-}
-
-.links a span {
   font-size: 1.25rem;
 }
 
@@ -99,7 +98,6 @@ a {
   display: inline-block;
   color: inherit;
   text-decoration: none;
-  padding: 1rem;
 }
 a:hover {
   text-decoration: underline;
@@ -113,8 +111,8 @@ h1 {
   font-weight: bold;
   line-height: 100%;
   padding: 0.5rem 0;
-  margin: auto;
   user-select: none;
+  margin-bottom: 6rem;
 }
 
 h1 div {

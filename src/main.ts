@@ -1,7 +1,8 @@
 import "./styles.css";
-import { createCube } from "./cube";
 import { createPointer } from "./pointer";
 import { createWalls } from "./walls";
+import brace from "./brace.shape";
+import { PhysicsObject } from "./physic.object";
 
 const RAPIER = await import("@dimforge/rapier2d");
 
@@ -41,90 +42,126 @@ window.addEventListener("mouseup", () => {
   pointerDown = false;
 });
 
-/** physics */
+/** Dom elements to position physic objects */
+const headingElements = document.querySelectorAll<HTMLDivElement>("h1 div");
+const headingBounds = [
+  headingElements[0].getBoundingClientRect(),
+  headingElements[1].getBoundingClientRect(),
+];
+const links = document.querySelectorAll("a span");
+const colors = ["#da702c", "#d0a215"];
+
+/** Physics world */
 const gravity = new RAPIER.Vector2(0.0, 9.8);
 const world = new RAPIER.World(gravity);
-const scalingFactor = 50; // 1 physics meter = 50px
+const scaling = 50; // 1 physics meter = 50px
 
-/** create walls */
-createWalls(world, canvas, scalingFactor);
+/**
+ * Collider Groups
+ * | Type             | Group        | Interact with groups | Bitmask    |
+ * | :--------------- | :----------  | :------------------  | :--------- |
+ * | Walls            | 0            | 2                    | 0x00010004 |
+ * | Pointer          | 1            | 2                    | 0x00020004 |
+ * | Objects          | 2            | 0, 1, 2              | 0x00040007 |
+ */
+const COLLISION_GROUP_OBJECTS = 0x00040007;
 
-/** cubes below heading */
-const heading = document.querySelector("h1 > div") as HTMLSpanElement;
-const headingBounds = heading.getBoundingClientRect();
+/** Physic Objects */
+createWalls(world, canvas, scaling);
+const pointer = createPointer(world, canvas, scaling);
 
-const headingCubeHalfSize = 0.36;
-const cubes = ["#d14d41", "#da702c", "#4385be"].map((color, idx) => {
-  return createCube(world, scalingFactor, context, {
-    hx: headingCubeHalfSize,
-    hy: headingCubeHalfSize,
-    translation: new RAPIER.Vector2(
-      headingBounds.left / scalingFactor +
-        headingCubeHalfSize +
-        idx * headingCubeHalfSize * 2 +
-        idx * 0.1,
-      headingBounds.bottom / scalingFactor + 0.1
-    ),
-    color,
-    restitution: 0.8,
-  });
-});
+const physicsObjects: PhysicsObject[] = [];
 
-/** cube between words */
-cubes.push(
-  createCube(world, scalingFactor, context, {
-    hx: isMobile ? 0.08 : 0.12,
-    hy: isMobile ? 0.08 : 0.12,
-    translation: new RAPIER.Vector2(
-      headingBounds.right / scalingFactor + (isMobile ? 0.2 : 0.3),
-      headingBounds.bottom / scalingFactor - (isMobile ? 0.42 : 0.6)
-    ),
-    rotation: Math.PI / 4,
-    radius: 2,
+physicsObjects.push(
+  /** Left side brace */
+  new PhysicsObject(
+    world,
+    scaling,
+    RAPIER.RigidBodyDesc.dynamic()
+      .setTranslation(
+        headingBounds[0].left / scaling - (isMobile ? 0.5 : 0.8),
+        (headingBounds[0].top + headingBounds[0].height / 2) / scaling
+      )
+      .setSleeping(true),
+    RAPIER.ColliderDesc.convexHull(brace)!
+      .setCollisionGroups(COLLISION_GROUP_OBJECTS)
+      .setDensity(3),
+    "#4385be"
+  ),
+  /** Right side brace */
+  new PhysicsObject(
+    world,
+    scaling,
+    RAPIER.RigidBodyDesc.dynamic()
+      .setTranslation(
+        headingBounds[1].right / scaling + (isMobile ? 0.5 : 0.8),
+        (headingBounds[1].top + headingBounds[1].height / 2) / scaling
+      )
+      .setRotation(Math.PI)
+      .setSleeping(true),
+    RAPIER.ColliderDesc.convexHull(brace)!
+      .setCollisionGroups(COLLISION_GROUP_OBJECTS)
+      .setDensity(3),
+    "#4385be"
+  ),
+  /** Dot in between words */
+  new PhysicsObject(
+    world,
+    scaling,
+    RAPIER.RigidBodyDesc.dynamic()
+      .setTranslation(
+        headingBounds[0].right / scaling + (isMobile ? 0.19 : 0.3),
+        headingBounds[0].bottom / scaling - (isMobile ? 0.43 : 0.6)
+      )
+      .setRotation(Math.PI / 4)
+      .setSleeping(true),
+    RAPIER.ColliderDesc.cuboid(
+      ...((isMobile ? [0.1, 0.1] : [0.12, 0.12]) as [number, number])
+    )
+      .setCollisionGroups(COLLISION_GROUP_OBJECTS)
+      .setRestitution(0.8)
+  ),
+  /** Bars under links */
+  ...Array.from(links).map((link, idx) => {
+    const linkBounds = link.getBoundingClientRect();
+    const cubeHalfHeight = 0.06;
+    const cubeHalfWidth = linkBounds.width / 2 / scaling;
+
+    return new PhysicsObject(
+      world,
+      scaling,
+      RAPIER.RigidBodyDesc.dynamic()
+        .setTranslation(
+          linkBounds.left / scaling + cubeHalfWidth,
+          linkBounds.bottom / scaling
+        )
+        .setSleeping(true),
+      RAPIER.ColliderDesc.cuboid(cubeHalfWidth, cubeHalfHeight)
+        .setCollisionGroups(COLLISION_GROUP_OBJECTS)
+        .setRestitution(0.4),
+      colors[idx]
+    );
   })
 );
 
-/** cubes below links */
-const links = document.querySelectorAll("a span");
-const colors = ["#ce5d97", "#879a39"];
-links.forEach((link, idx) => {
-  const linkBounds = link.getBoundingClientRect();
-  const cubeHalfHeight = 0.08;
-  const cubeHalfWidth = linkBounds.width / scalingFactor / 2;
-
-  cubes.push(
-    createCube(world, scalingFactor, context, {
-      hx: cubeHalfWidth,
-      hy: cubeHalfHeight,
-      translation: new RAPIER.Vector2(
-        linkBounds.left / scalingFactor + cubeHalfWidth,
-        linkBounds.bottom / scalingFactor
-      ),
-      color: colors[idx],
-      radius: 1,
-      restitution: 0.2,
-      density: 4,
-    })
-  );
-});
-
-/** create pointer */
-const pointer = createPointer(world, canvas, scalingFactor);
-
+/** Animation */
 let t = 0;
 let dt = 1 / 60;
 let currentTime = performance.now() / 1000;
 let accumulator = 0;
 
 function loop(newTime: DOMHighResTimeStamp) {
+  requestAnimationFrame(loop);
+
   let frameTime = (newTime - currentTime) / 1000;
   if (frameTime > 0.25) frameTime = 0.25;
 
   currentTime = newTime;
   accumulator += frameTime;
 
+  /** Step physics world forward */
   while (accumulator >= dt) {
-    cubes.forEach((cube) => cube.setPreviousBodyState());
+    physicsObjects.forEach((obj) => obj.saveBodyState());
     pointer.update(pointerPosition);
 
     world.timestep = dt;
@@ -136,12 +173,10 @@ function loop(newTime: DOMHighResTimeStamp) {
 
   const alpha = accumulator / dt;
 
+  /** Rendering */
   context.clearRect(0, 0, canvas.width, canvas.height);
-
-  cubes.forEach((cube) => cube.render(alpha));
+  physicsObjects.forEach((obj) => obj.render(context, alpha));
   pointer.render(pointerDown);
-
-  requestAnimationFrame(loop);
 }
 
 requestAnimationFrame(loop);
