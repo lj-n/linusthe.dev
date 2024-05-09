@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap');
+
+:root {
+  color-scheme: light dark;
+  --background: #FFFCF0;
+  --text: #100F0F;
+  --red: #AF3029;
+  --orange: #BC5215;
+  --yellow: #AD8301;
+  --green: #66800B;
+  --cyan: #24837B;
+  --blue: #205EA6;
+  --purple: #5E409D;
+  --magenta: #A02F6F;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #100F0F;
+    --text: #CECDC3;
+    --red: #D14D41;
+    --orange: #DA702C;
+    --yellow: #D0A215;
+    --green: #879A39;
+    --cyan: #3AA99F;
+    --blue: #4385BE;
+    --purple: #8B7EC8;
+    --magenta: #CE5D97;
+  }
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--background);
+  color: var(--text);
+}
+
+body {
+  min-height: 100vh;
+  overscroll-behavior: none;
+  padding: 1rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.letters {
+  display: flex;
+}
+
+.typing {
+  width: 19ch;
+  animation: typing 1.5s steps(19);
+  white-space: nowrap;
+  overflow: hidden;
+  display: flex;
+}
+
+.cursor {
+  width: 10px;
+  background-color: #C8C093;
+  animation: cursor .5s step-end infinite alternate;
+}
+
+.content {
+  opacity: 0;
+  animation: fade-in .25s;
+  animation-delay: 1.5s;
+  animation-fill-mode: forwards;
+  list-style-position: inside;
+  padding: 1rem;
+  list-style: none;
+}
+
+.content a, .content button {
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+  display: flex;
+  width: fit-content;
+  text-decoration: none;
+  &:hover span:not(.whitespance) {
+    color: var(--red);
+  }
+}
+
+#chaos-button {
+  display: none;
+  opacity: 0;
+  transition: opacity .5s;
+}
+
+.blue {
+  color: var(--blue);
+}
+
+.green {
+  color: var(--green);
+}
+
+.orange {
+  color: var(--orange);
+}
+
+.purple {
+  color: var(--purple);
+}
+
+@keyframes typing {
+  0% { width: 0; }
+  100% { width: 19ch; }
+}
+
+@keyframes cursor {
+  50% { background-color: transparent }
+}
+
+@keyframes fade-in {
+  0% { opacity: 0 }
+  100% { opacity: 1 }
+}
+
+@media (min-width: 600px) {
+  body {
+    font-size: 1.25rem;
+  }
+}
